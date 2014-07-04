@@ -137,4 +137,56 @@ class WeiboOAuth2 extends OAuth2Abstract {
 		$headers[] = "API-RemoteIP: " . ($this->remote_ip ?: $_SERVER['REMOTE_ADDR']);
 		return $headers;
 	}
+	
+	/**
+	 * require $this->redirect_uri
+	 * @param string $userId email of user
+	 * @param string $passwd password of user
+	 * @return array
+	 */
+	public function getTokenByPassword($userId, $passwd){
+		$postdata = array(
+				'client_id'		=> $this->client_id,
+				'response_type'	=> 'code',
+				'redirect_uri'	=> $this->redirect_uri,
+				'action'		=> 'submit',
+				'userId'		=> $userId,
+				'passwd'		=> $passwd,
+				'isLoginSina'	=> 0,
+				'from'			=> '',
+				'regCallback'	=> '',
+				'state'			=> '',
+				'ticket'		=> '',
+				'withOfficalFlag'=> 0,
+		);
+		
+		$ch = curl_init ();
+		
+		curl_setopt ( $ch, CURLOPT_URL, $this->authorizeURL() );
+		curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+		curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+		curl_setopt ( $ch, CURLOPT_REFERER, $this->getAuthorizeURL($this->redirect_uri) );
+		curl_setopt ( $ch, CURLOPT_USERAGENT, CLIENT_USER_AGENT );
+		curl_setopt ( $ch, CURLOPT_POST, true );
+		curl_setopt ( $ch, CURLOPT_POSTFIELDS, http_build_query($postdata) );
+		
+		$response = curl_exec ( $ch );
+		$last_url = curl_getinfo ( $ch, CURLINFO_EFFECTIVE_URL );
+		
+		$urlArray = parse_url($last_url);
+		
+		if (!isset($urlArray['query'])){
+			return false;
+		}
+		parse_str($urlArray['query'], $param);
+		
+		$keys = array (
+			'code'	=> $param['code'],
+			'redirect_uri'=> $this->redirect_uri,
+		);
+		
+		return $this->getAccessToken ( 'code', $keys );
+	}
 }
