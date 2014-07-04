@@ -168,7 +168,7 @@ class WeiboOAuth2 extends OAuth2Abstract {
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
 		curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, 1 );
 		curl_setopt ( $ch, CURLOPT_REFERER, $this->getAuthorizeURL($this->redirect_uri) );
-		curl_setopt ( $ch, CURLOPT_USERAGENT, CLIENT_USER_AGENT );
+		curl_setopt ( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)' );
 		curl_setopt ( $ch, CURLOPT_POST, true );
 		curl_setopt ( $ch, CURLOPT_POSTFIELDS, http_build_query($postdata) );
 		
