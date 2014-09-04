@@ -1,0 +1,18 @@
+{
+	"name": "shen2/zen-oauth2",
+	"description": "一个更好的OAuth2访问类，同时支持微博、豆瓣、Google等社交网站",
+	"minimum-stability": "stable",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Shen Zhenyu",
+			"email": "zhenyupku@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"psr-4": { "ZenOAuth2\\": "src/" }
+	}
+}
