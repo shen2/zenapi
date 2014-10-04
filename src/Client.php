@@ -28,24 +28,15 @@ class Client {
 	 * @ignore
 	 */
 	public $host;
-	/**
-	 * Set timeout default.
-	 *
-	 * @ignore
-	 */
-	public $timeout = 30;
-	/**
-	 * Set connect timeout.
-	 *
-	 * @ignore
-	 */
-	public $connecttimeout = 30;
-	/**
-	 * Verify SSL Cert.
-	 *
-	 * @ignore
-	 */
-	public $ssl_verifypeer = FALSE;
+	
+	protected $_curlOptions = array(
+		CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
+		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.2',
+		CURLOPT_CONNECTTIMEOUT	=> 30,
+		CURLOPT_TIMEOUT			=> 30,
+		CURLOPT_SSL_VERIFYPEER	=> FALSE,
+	);
+	
 	/**
 	 * Respons format.
 	 *
@@ -64,13 +55,7 @@ class Client {
 	 * @ignore
 	 */
 	public $http_info;
-	/**
-	 * Set the useragnet.
-	 *
-	 * @ignore
-	 */
-	public $useragent = 'OAuth2Client v0.1';
-
+	
 	/**
 	 * print the debug info
 	 *
@@ -90,6 +75,10 @@ class Client {
 	public function __construct($access_token = NULL, $refresh_token = NULL) {
 		$this->access_token = $access_token;
 		$this->refresh_token = $refresh_token;
+	}
+	
+	public function setCurlOptions(array $options){
+		$this->_curlOptions = array_merge($this->_curlOptions, $options);
 	}
 	
 	protected function _paramsFilter(&$params){
@@ -168,13 +157,11 @@ class Client {
 		$this->http_info = array();
 		$ci = curl_init();
 		/* Curl settings */
-		curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-		curl_setopt($ci, CURLOPT_USERAGENT, $this->useragent);
-		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->connecttimeout);
-		curl_setopt($ci, CURLOPT_TIMEOUT, $this->timeout);
+		foreach($this->_curlOptions as $optionName => $optionValue){
+			curl_setopt($ci, $optionName, $optionValue);
+		}
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
-		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
 		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 

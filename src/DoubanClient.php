@@ -9,19 +9,6 @@ class DoubanClient extends Client{
 	 */
 	public $host = "https://api.douban.com/";
 	
-	/**
-	 * Verify SSL Cert.
-	 *
-	 * @ignore
-	 */
-	public $ssl_verifypeer = FALSE;
-	
-	/**
-	 *
-	 * @var string
-	 */
-	public $remote_ip = null;
-	
 	protected function _additionalHeaders(){
 		$headers = array();
 		

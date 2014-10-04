@@ -10,13 +10,6 @@ class WeiboClient extends Client{
 	public $host = "https://api.weibo.com/2/";
 	
 	/**
-	 * Verify SSL Cert.
-	 *
-	 * @ignore
-	 */
-	public $ssl_verifypeer = FALSE;
-	
-	/**
 	 *
 	 * @var string
 	 */

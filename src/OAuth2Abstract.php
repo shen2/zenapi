@@ -22,36 +22,21 @@ abstract class OAuth2Abstract {
 	 * @ignore
 	 */
 	public $url;
-	/**
-	 * Set timeout default.
-	 *
-	 * @ignore
-	 */
-	public $timeout = 30;
-	/**
-	 * Set connect timeout.
-	 *
-	 * @ignore
-	 */
-	public $connecttimeout = 30;
-	/**
-	 * Verify SSL Cert.
-	 *
-	 * @ignore
-	 */
-	public $ssl_verifypeer = FALSE;
+	
+	protected $_curlOptions = array(
+		CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
+		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.2',
+		CURLOPT_CONNECTTIMEOUT	=> 30,
+		CURLOPT_TIMEOUT			=> 30,
+		CURLOPT_SSL_VERIFYPEER	=> FALSE,
+	);
+	
 	/**
 	 * Contains the last HTTP headers returned.
 	 *
 	 * @ignore
 	 */
 	public $http_info;
-	/**
-	 * Set the useragnet.
-	 *
-	 * @ignore
-	 */
-	public $useragent = 'OAuth2Client v0.1';
 
 	/**
 	 * print the debug info
@@ -75,10 +60,14 @@ abstract class OAuth2Abstract {
 		$this->client_secret = $client_secret;
 	}
 	
+	public function setCurlOptions(array $options){
+		$this->_curlOptions = array_merge($this->_curlOptions, $options);
+	}
+	
 	/**
 	 * access_token接口
 	 *
-	 * 对应API：{@link http://open.weibo.com/wiki/OAuth2/access_token OAuth2/access_token}
+	 * @link http://open.weibo.com/wiki/OAuth2/access_token OAuth2/access_token
 	 *
 	 * @param string $type 请求的类型,可以为:code, password, token
 	 * @param array $keys 其他参数：
@@ -108,15 +97,11 @@ abstract class OAuth2Abstract {
 
 		$response = $this->http($this->accessTokenURL(), 'POST', http_build_query($params));
 		
-		$token = json_decode($response, true);
-		if ( is_array($token) && !isset($token['error']) ) {
-			//$this->access_token = $token['access_token'];
-			//if (isset($token['refresh_token'])) //	modified by shen2，新应用可能没有refresh_token
-			//	$this->refresh_token = $token['refresh_token'];
-		} else {
-			throw new Exception("get access token failed." . $token['error']);
-		}
-		return $token;
+		return $this->_tokenFilter($response);
+	}
+	
+	protected function _tokenFilter($response){
+		return json_decode($response, true);
 	}
 
 	/**
@@ -160,13 +145,11 @@ abstract class OAuth2Abstract {
 		$this->http_info = array();
 		$ci = curl_init();
 		/* Curl settings */
-		curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-		curl_setopt($ci, CURLOPT_USERAGENT, $this->useragent);
-		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->connecttimeout);
-		curl_setopt($ci, CURLOPT_TIMEOUT, $this->timeout);
+		foreach($this->_curlOptions as $optionName => $optionValue){
+			curl_setopt($ci, $optionName, $optionValue);
+		}
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
-		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
 		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 
