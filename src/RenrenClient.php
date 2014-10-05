@@ -17,12 +17,4 @@ class RenrenClient extends Client{
 		
 		return $headers;
 	}
-	
-	public function realUrl($url){
-		if (strrpos($url, 'https://') !== 0 && strrpos($url, 'https://') !== 0) {
-			$url = "{$this->host}{$url}";
-		}
-		
-		return $url;
-	}
 }

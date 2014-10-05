@@ -1,13 +1,19 @@
 <?php
 namespace ZenOAuth2;
 
-class QqClient extends Client{
+class QqtClient extends Client{
 	/**
 	 * Set up the API root URL.
 	 *
 	 * @ignore
 	 */
-	public $host = "https://graph.qq.com/";
+	public $host = "https://open.t.qq.com/api/";
+	
+	/**
+	 *
+	 * @var string
+	 */
+	public $remote_ip = null;
 	
 	/**
 	 * 
@@ -37,14 +43,10 @@ class QqClient extends Client{
 		$params['access_token'] = $this->access_token;
 		$params['oauth_consumer_key'] = $this->client_id;
 		$params['openid'] = $this->openid;
-	}
-	
-	protected function _additionalHeaders(){
-		$headers = array();
+		$params['format'] = 'json';
+		$params['oauth_version'] = '2.a';
 		
-		if ($this->access_token)
-			$headers[] = "Authorization: OAuth2 ".$this->access_token;
-		
-		return $headers;
+		if (isset($this->remote_ip))
+			$params['clientip'] = $this->remote_ip;
 	}
 }

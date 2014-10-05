@@ -38,7 +38,7 @@ class WeiboClient extends Client{
 	
 	public function realUrl($url){
 		if (strrpos($url, 'https://') !== 0 && strrpos($url, 'https://') !== 0) {
-			$url = "{$this->host}{$url}.{$this->format}";
+			$url = $this->host . $url . '.' . $this->format;
 		}
 		
 		return $url;

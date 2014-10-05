@@ -147,6 +147,14 @@ class Client {
 		return array();
 	}
 	
+	public function realUrl($url){
+		if (strrpos($url, 'https://') !== 0 && strrpos($url, 'https://') !== 0) {
+			$url = $this->host . $url;
+		}
+	
+		return $url;
+	}
+	
 	/**
 	 * Make an HTTP request
 	 *

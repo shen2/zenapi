@@ -14,10 +14,6 @@ class GoogleClient extends Client{
 		return $response;
 	}
 	
-	public function realUrl($url){
-		return $this->host . $url;
-	}
-	
 	protected function _paramsFilter(&$params){
 		$params['key'] = $this->access_token;
 	}
