@@ -77,7 +77,7 @@ abstract class OAuth2Abstract {
 	 * @return array
 	 */
 	public function getAccessToken( $type = 'code', $keys ) {
-		$params = array();
+		$params = $keys;
 		$params['client_id'] = $this->client_id;
 		$params['client_secret'] = $this->client_secret;
 		if ( $type === 'token' ) {
