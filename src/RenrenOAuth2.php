@@ -31,7 +31,7 @@ class RenrenOAuth2 extends OAuth2Abstract {
 	 * @param bool $x_renew 是否强制用户重新登录，true：是，false：否。默认false。
 	 * @return string
 	 */
-	public function getAuthorizeURL( $url, $response_type = 'code', $state = NULL, $display = NULL, $forcelogin = NULL) {
+	public function getAuthorizeURL( $url, $response_type = 'code', $scope = NULL, $state = NULL, $display = NULL, $forcelogin = NULL) {
 		$params = array();
 		$params['client_id'] = $this->client_id;
 		$params['redirect_uri'] = $url;
@@ -39,6 +39,7 @@ class RenrenOAuth2 extends OAuth2Abstract {
 		$params['state'] = $state;
 		$params['display'] = $display;
 		$params['x_renew'] = $forcelogin;
+		$params['scope'] = $scope;
 		
 		return $this->authorizeURL() . "?" . http_build_query($params);
 	}
