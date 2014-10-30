@@ -30,13 +30,14 @@ class SohuOAuth2 extends OAuth2Abstract {
 	 * @param string $display 授权页面类型
 	 * @return string
 	 */
-	public function getAuthorizeURL( $url, $response_type = 'code', $state = NULL, $display = NULL) {
+	public function getAuthorizeURL($url, $response_type = 'code', $scope = NULL, $state = NULL, $display = NULL) {
 		$params = array();
 		$params['client_id'] = $this->client_id;
 		$params['redirect_uri'] = $url;
 		$params['response_type'] = $response_type;
 		$params['state'] = $state;
 		$params['display'] = $display;
+		$params['scope'] = $scope;
 		
 		return $this->authorizeURL() . "?" . http_build_query($params);
 	}
