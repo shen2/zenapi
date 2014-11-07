@@ -7,7 +7,7 @@ class SohuClient extends Client{
 	 *
 	 * @ignore
 	 */
-	public $host = "https://api.sohu.com/rest/pp/prv/1/";
+	public $host = "https://api.sohu.com/rest/i/prv/1/";
 	
 	protected function _paramsFilter(&$params){
 		$params['access_token'] = $this->access_token;
