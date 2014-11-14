@@ -3,13 +3,6 @@ namespace ZenOAuth2;
 
 class InstagramOAuth2 extends OAuth2Abstract {
 	/**
-	 * Set up the API root URL.
-	 *
-	 * @ignore
-	 */
-    public $host = 'https://api.instagram.com/v1/';
-
-	/**
 	 * Set API URLS
 	 */
 	/**

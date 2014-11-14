@@ -3,9 +3,9 @@ namespace ZenOAuth2;
 
 class InstagramClient extends Client{
 	
-	public $host = 'https://api.instagram.com/';
+	public $host = 'https://api.instagram.com/v1/';
 	
 	protected function _paramsFilter(&$params){
-		$params['key'] = $this->access_token;
+		$params['access_token'] = $this->access_token;
 	}
 }
