@@ -44,11 +44,14 @@ class QqOAuth2 extends OAuth2Abstract {
 	}
 
 	protected function _tokenFilter($response){
-		parse_str($response, $token);
+		if (preg_match('/^callback\((.+)\);$/', $response, $matches))
+			$token = json_decode($matches[1], true);
+		else
+			parse_str($response, $token);
 		
-		if (!is_array($token) || isset($token['code']) ) {
-			var_dump($response);var_dump($params);var_dump($token);	//modified by shen2, 用来调试
-			throw new Exception("get access token failed." . $token['code'] . ':' . $token['msg']);
+		if (!is_array($token) || isset($token['error']) ) {
+			var_dump($response);var_dump($token);	//modified by shen2, 用来调试
+			throw new Exception("get access token failed." . $token['error'] . ':' . $token['error_description']);
 		}
 		
 		return $token;
