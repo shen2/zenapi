@@ -36,7 +36,6 @@ class BaiduOAuth2 extends OAuth2Abstract {
 
 	protected function _tokenFilter($response){
 		$token = json_decode($response, true);
-		var_dump($token);
 		
 		if (!is_array($token) || isset($token['error']) ) {
 			throw new Exception($token['error'] . ', ' . $token['error_description']);
