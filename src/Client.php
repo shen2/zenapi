@@ -11,12 +11,6 @@ class Client {
 	 */
 	public $refresh_token;
 	/**
-	 * Contains the last HTTP status code returned. 
-	 *
-	 * @ignore
-	 */
-	public $http_code;
-	/**
 	 * Contains the last API call.
 	 *
 	 * @ignore
@@ -51,6 +45,12 @@ class Client {
 	public $decode_json = TRUE;
 	/**
 	 * Contains the last HTTP headers returned.
+	 *
+	 * @ignore
+	 */
+	public $http_header;
+	/**
+	 * Contains the last HTTP info returned.
 	 *
 	 * @ignore
 	 */
@@ -134,8 +134,24 @@ class Client {
 	public function delete($url, $parameters = array()) {
 		$this->_paramsFilter($parameters);
 		
-		$response = $this->http($this->realUrl($url), 'DELETE', http_build_query($parameters), $headers);
+		$response = $this->http($this->realUrl($url), 'DELETE', http_build_query($parameters));
 		
+		return $this->parseResponse($response);
+	}
+
+	public function put($url, $parameters = array()) {
+		$this->_paramsFilter($parameters);
+
+		$response = $this->http($this->realUrl($url), 'PUT', http_build_query($parameters));
+
+		return $this->parseResponse($response);
+	}
+
+	public function patch($url, $parameters = array()) {
+		$this->_paramsFilter($parameters);
+
+		$response = $this->http($this->realUrl($url), 'PATCH', http_build_query($parameters));
+
 		return $this->parseResponse($response);
 	}
 
@@ -201,7 +217,6 @@ class Client {
 	    	throw new CurlException($message, $code);
 	    }
 		
-		$this->http_code = curl_getinfo($ci, CURLINFO_HTTP_CODE);
 		$this->http_info = array_merge($this->http_info, curl_getinfo($ci));
 		$this->url = $url;
 
@@ -242,8 +257,6 @@ class Client {
 		if (!$params) return '';
 
 		uksort($params, 'strcmp');
-
-		$pairs = array();
 
 		self::$boundary = $boundary = uniqid('------------------');
 		$MPboundary = '--'.$boundary;
