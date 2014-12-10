@@ -139,18 +139,32 @@ class Client {
 		return $this->parseResponse($response);
 	}
 
-	public function put($url, $parameters = array()) {
+	public function put($url, $parameters = array(), $multi = false) {
 		$this->_paramsFilter($parameters);
 
-		$response = $this->http($this->realUrl($url), 'PUT', http_build_query($parameters));
+		$headers = array();
+		if (!$multi && (is_array($parameters) || is_object($parameters)) ) {
+			$body = http_build_query($parameters);
+		} else {
+			$body = self::build_http_query_multi($parameters);
+			$headers[] = "Content-Type: multipart/form-data; boundary=" . self::$boundary;
+		}
+		$response = $this->http($this->realUrl($url), 'PUT', $body, $headers);
 
 		return $this->parseResponse($response);
 	}
 
-	public function patch($url, $parameters = array()) {
+	public function patch($url, $parameters = array(), $multi = false) {
 		$this->_paramsFilter($parameters);
 
-		$response = $this->http($this->realUrl($url), 'PATCH', http_build_query($parameters));
+		$headers = array();
+		if (!$multi && (is_array($parameters) || is_object($parameters)) ) {
+			$body = http_build_query($parameters);
+		} else {
+			$body = self::build_http_query_multi($parameters);
+			$headers[] = "Content-Type: multipart/form-data; boundary=" . self::$boundary;
+		}
+		$response = $this->http($this->realUrl($url), 'PATCH', $body, $headers);
 
 		return $this->parseResponse($response);
 	}
