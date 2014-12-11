@@ -204,7 +204,10 @@ class Client {
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 
 		switch ($method) {
+			case 'PUT':
+			case 'PATCH':
 			case 'POST':
+				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, $method);
 				curl_setopt($ci, CURLOPT_POST, TRUE);
 				if (!empty($postfields)) {
 					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
