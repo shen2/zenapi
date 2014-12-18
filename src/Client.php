@@ -7,10 +7,6 @@ class Client {
 	 */
 	public $access_token;
 	/**
-	 * @ignore
-	 */
-	public $refresh_token;
-	/**
 	 * Contains the last API call.
 	 *
 	 * @ignore
@@ -25,7 +21,7 @@ class Client {
 	
 	protected $_curlOptions = array(
 		CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
-		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.2',
+		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.3',
 		CURLOPT_CONNECTTIMEOUT	=> 30,
 		CURLOPT_TIMEOUT			=> 30,
 		CURLOPT_SSL_VERIFYPEER	=> FALSE,
@@ -72,9 +68,8 @@ class Client {
 	/**
 	 * construct self object
 	 */
-	public function __construct($access_token = NULL, $refresh_token = NULL) {
+	public function __construct($access_token = NULL) {
 		$this->access_token = $access_token;
-		$this->refresh_token = $refresh_token;
 	}
 	
 	public function setCurlOptions(array $options){
@@ -202,47 +197,48 @@ class Client {
 	
 	/**
 	 * Make an HTTP request
-	 *
+	 * 
+	 * @param string $url
+	 * @param string $method
+	 * @param string $postfields
+	 * @param array $headers
+	 * @throws CurlException
 	 * @return string API results
-	 * @ignore
 	 */
 	public function http($url, $method, $postfields = NULL, $headers = array()) {
 		$this->http_info = array();
 		$ci = curl_init();
 		/* Curl settings */
-		foreach($this->_curlOptions as $optionName => $optionValue){
-			curl_setopt($ci, $optionName, $optionValue);
-		}
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
 		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
-
+		curl_setopt($ci, CURLOPT_URL, $url);
+		curl_setopt($ci, CURLOPT_HTTPHEADER, array_merge($headers, $this->_additionalHeaders()));
+		curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE);
+		
+		curl_setopt_array($ci, $this->_curlOptions);
+		
 		switch ($method) {
 			case 'POST':
 				curl_setopt($ci, CURLOPT_POST, TRUE);
 				break;
 			case 'GET':
+				curl_setopt($ci, CURLOPT_POST, FALSE);
 				break;
 			default:
 				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, $method);
-				break;
 		}
 
 		if (!empty($postfields))
 			curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
 
-		curl_setopt($ci, CURLOPT_URL, $url );
-		curl_setopt($ci, CURLOPT_HTTPHEADER, array_merge($headers, $this->_additionalHeaders()) );
-		curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE );
-
 		$response = curl_exec($ci);
 		
 		if ($response === false){	//	modified by shen2
-			$message = curl_error($ci);
-			$code = curl_errno($ci);
-			curl_close($ci);
-			throw new CurlException($message, $code);
+			$exception = new CurlException(curl_error($ci), curl_errno($ci));
+	    	curl_close($ci);
+	    	throw $exception;
 		}
 		
 		$this->http_info = array_merge($this->http_info, curl_getinfo($ci));

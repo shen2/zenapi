@@ -50,7 +50,6 @@ class QqOAuth2 extends OAuth2Abstract {
 			parse_str($response, $token);
 		
 		if (!is_array($token) || isset($token['error']) ) {
-			var_dump($response);var_dump($token);	//modified by shen2, 用来调试
 			throw new Exception("get access token failed." . $token['error'] . ':' . $token['error_description']);
 		}
 		

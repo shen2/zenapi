@@ -11,12 +11,6 @@ abstract class OAuth2Abstract {
 	 */
 	public $client_secret;
 	/**
-	 * Contains the last HTTP status code returned. 
-	 *
-	 * @ignore
-	 */
-	public $http_code;
-	/**
 	 * Contains the last API call.
 	 *
 	 * @ignore
@@ -25,7 +19,7 @@ abstract class OAuth2Abstract {
 	
 	protected $_curlOptions = array(
 		CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
-		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.2',
+		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.3',
 		CURLOPT_CONNECTTIMEOUT	=> 30,
 		CURLOPT_TIMEOUT			=> 30,
 		CURLOPT_SSL_VERIFYPEER	=> FALSE,
@@ -105,29 +99,6 @@ abstract class OAuth2Abstract {
 	}
 
 	/**
-	 * 解析 signed_request
-	 *
-	 * @param string $signed_request 应用框架在加载iframe时会通过向Canvas URL post的参数signed_request
-	 *
-	 * @return array
-	 */
-	public function parseSignedRequest($signed_request) {
-		list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
-		$sig = self::base64decode($encoded_sig) ;
-		$data = json_decode(self::base64decode($payload), true);
-		if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') return '-1';
-		$expected_sig = hash_hmac('sha256', $payload, $this->client_secret, true);
-		return ($sig !== $expected_sig)? '-2':$data;
-	}
-
-	/**
-	 * @ignore
-	 */
-	public function base64decode($str) {
-		return base64_decode(strtr($str.str_repeat('=', (4 - strlen($str) % 4)), '-_', '+/'));
-	}
-
-	/**
 	 * 
 	 * @return array
 	 */
@@ -138,56 +109,49 @@ abstract class OAuth2Abstract {
 	/**
 	 * Make an HTTP request
 	 *
+	 * @param string $url
+	 * @param string $method
+	 * @param string $postfields
+	 * @param array $headers
+	 * @throws CurlException
 	 * @return string API results
-	 * @ignore
 	 */
 	public function http($url, $method, $postfields = NULL, $headers = array()) {
 		$this->http_info = array();
 		$ci = curl_init();
 		/* Curl settings */
-		foreach($this->_curlOptions as $optionName => $optionValue){
-			curl_setopt($ci, $optionName, $optionValue);
-		}
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
 		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
+		curl_setopt($ci, CURLOPT_URL, $url);
+		curl_setopt($ci, CURLOPT_HTTPHEADER, array_merge($headers, $this->_additionalHeaders()));
+		curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE);
+		
+		curl_setopt_array($ci, $this->_curlOptions);
 
 		switch ($method) {
 			case 'POST':
 				curl_setopt($ci, CURLOPT_POST, TRUE);
-				if (!empty($postfields)) {
-					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
-					$this->postdata = $postfields;
-				}
 				break;
-			case 'DELETE':
-				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE');
-				if (!empty($postfields)) {
-					$url = "{$url}?{$postfields}";
-				}
+			case 'GET':
+				curl_setopt($ci, CURLOPT_POST, FALSE);
+				break;
+			default:
+				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, $method);
 		}
 
-		//if ( isset($this->access_token) && $this->access_token )
-		//	$headers[] = "Authorization: OAuth2 ".$this->access_token;
-
-		foreach($this->_additionalHeaders() as $line)
-			$headers[] = $line;
-		
-		curl_setopt($ci, CURLOPT_URL, $url );
-		curl_setopt($ci, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE );
+		if (!empty($postfields))
+			curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
 
 		$response = curl_exec($ci);
 		
 		if ($response === false){	//	modified by shen2
-	    	$message = curl_error($ci);
-	    	$code = curl_errno($ci);
+	    	$exception = new CurlException(curl_error($ci), curl_errno($ci));
 	    	curl_close($ci);
-	    	throw new CurlException($message, $code);
+	    	throw $exception;
 	    }
 		
-		$this->http_code = curl_getinfo($ci, CURLINFO_HTTP_CODE);
 		$this->http_info = array_merge($this->http_info, curl_getinfo($ci));
 		$this->url = $url;
 
