@@ -239,11 +239,11 @@ class Client {
 		$response = curl_exec($ci);
 		
 		if ($response === false){	//	modified by shen2
-	    	$message = curl_error($ci);
-	    	$code = curl_errno($ci);
-	    	curl_close($ci);
-	    	throw new CurlException($message, $code);
-	    }
+			$message = curl_error($ci);
+			$code = curl_errno($ci);
+			curl_close($ci);
+			throw new CurlException($message, $code);
+		}
 		
 		$this->http_info = array_merge($this->http_info, curl_getinfo($ci));
 		$this->url = $url;
