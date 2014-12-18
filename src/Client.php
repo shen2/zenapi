@@ -139,7 +139,7 @@ class Client {
 	public function delete($url, $parameters = array()) {
 		$this->_paramsFilter($parameters);
 		
-		$response = $this->http($this->realUrl($url), 'DELETE', http_build_query($parameters));
+		$response = $this->http($this->realUrl($url) . '?' . http_build_query($parameters), 'DELETE');
 		
 		return $this->parseResponse($response);
 	}
@@ -219,22 +219,18 @@ class Client {
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 
 		switch ($method) {
-			case 'PUT':
-			case 'PATCH':
 			case 'POST':
-				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, $method);
 				curl_setopt($ci, CURLOPT_POST, TRUE);
-				if (!empty($postfields)) {
-					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
-					$this->postdata = $postfields;
-				}
 				break;
-			case 'DELETE':
-				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE');
-				if (!empty($postfields)) {
-					$url = "{$url}?{$postfields}";
-				}
+			case 'GET':
+				break;
+			default:
+				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, $method);
+				break;
 		}
+
+		if (!empty($postfields))
+			curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
 
 		curl_setopt($ci, CURLOPT_URL, $url );
 		curl_setopt($ci, CURLOPT_HTTPHEADER, array_merge($headers, $this->_additionalHeaders()) );
