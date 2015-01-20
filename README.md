@@ -1,52 +1,89 @@
 ZenOAuth2
 =========
 
-一个更好更完善的OAuth2访问库
+通过一个统一风格的OAuth2访问库，统一各大社交网站接口。
 
-## 库的基本说明
-*  oauth client类：集成了对授权后的各种访问借口如get、post
-*  oauth OAuth2Abstract类：一个抽象类包含了如何授权，获取token的基本操作
-*  各种平台类包括weibo、qq、renren
+## 安装方法
+ZenOAuth2需要php5.3+，唯一的依赖是curl extension。
 
-## 授权基本步骤：
+ZenOAuth2遵循PSR-4规范。只需在composer.json中添加依赖：
+```
+    ...
+    "require": {
+        ...
+        "duoshuo/php-cassandra": "dev-master"
+    }
+    ...
+```
 
-+ 前往授权
+然后
+```
+$ composer install
+```
+
+## OAuth2类和授权流程
+OAuht2类是包含了生成授权地址，获取token的方法。
+
++ 跳转到社交网站的授权页
 ```php
 $config = array(
 	'akey' => 'app key', 
 	'skey' => 'secret key', 
-	'scope' => 'email,friendships_groups_read'
-	);
+	'scope' => 'email,friendships_groups_read',
+);
 $oauth = new ZenOAuth2\WeiboOAuth2($config['akey'], $config['skey']);  //初始化oauth
 $params = array(
-	'client_id'		=> $config['akey'],
+	'client_id'	=> $config['akey'],
 	'redirect_uri'	=> 'callback',//设置回调
 	'response_type'	=> 'code',
 	'state'		=> 'made by md5 avoid crsf',
 	'display'	=> null,
 	'scope'		=> $config['scope'],
 	'forcelogin'    => 0, //是否使用已登陆微博账号
-	);
-header('Location :' . $oauth->authorizeURL() . "?" . http_build_query($params));
+);
+
+$authorizeUrl = $oauth->authorizeURL() . "?" . http_build_query($params);
+header('Location : ' . $authorizeUrl);
 ```
-+ 获取授权码
+
++ 获取access_token
 
  ```php
-keys = array(
-	'code'	=> $_REQUEST['code'], //微博返回的code
-	'redirect_uri'=>'callback',
-	);
-$token = $oauth->getAccessToken('code', $keys);  //获取token
+//微博返回的code
+$keys = array(
+	'code'	=> $_REQUEST['code'],
+	'redirect_uri'=> '{{redirec_uri}}',
+);
+
+//获取token
+$token = $oauth->getAccessToken('code', $keys);
 ```
 
-## 平台操作
+## Client类和API访问方法
+* 首先用之前获得的access_token实例化一个Client对象
+* 然后就可以通过调用RESTful的方法，访问各种数据接口，如get()、post()、delete()
 
 ```php
-//根据上一步的授权码建立对象
+//根据上一步的acces_token实例化Client对象
 $client = new ZenOAuth2\WeiboClient($token['access_token']);
-//根据uid获取数据
-$info = $client->get('users/show', array('uid'=>$token['uid'])); 
+
+//根据uid获取用户信息
+$info = $client->get('users/show', array('uid'=>1739476392)); 
+
 //删除一条微博
-$data = $client->post('comments/destory', array('uid'=>$token['uid'], 'cid' => 'weiboid');  
+$data = $client->post('comments/destory', array('uid'=>1739476392, 'cid' => 'weiboid'));
 ```
 
+## 目前支持的社交网站
+* 微博
+* QQ
+* 腾讯微博
+* 人人
+* 百度
+* 搜狐
+* 豆瓣
+* 开心
+* Google
+* Instagram
+* Github
+* 
