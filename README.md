@@ -47,8 +47,7 @@ header('Location : ' . $authorizeUrl);
 ```
 
 + 获取access_token
-
- ```php
+```php
 //微博返回的code
 $keys = array(
 	'code'	=> $_REQUEST['code'],
@@ -86,4 +85,3 @@ $data = $client->post('comments/destory', array('uid'=>1739476392, 'cid' => 'wei
 * Google
 * Instagram
 * Github
-* 
