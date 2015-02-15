@@ -59,6 +59,21 @@ abstract class OAuth2Abstract {
 	}
 	
 	/**
+	 * authorize接口
+	 * 
+	 * @param array $params
+	 * @return string
+	 */
+	public function getAuthorizeURL(array $params) {
+		$defaults = array(
+			'client_id'	=> $this->client_id,
+			'response_type'=> 'code',
+		);
+		
+		return $this->authorizeURL() . "?" . http_build_query($params + $defaults);
+	}
+	
+	/**
 	 * access_token接口
 	 *
 	 * @link http://open.weibo.com/wiki/OAuth2/access_token OAuth2/access_token

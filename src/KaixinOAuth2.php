@@ -19,8 +19,10 @@ class KaixinOAuth2 extends OAuth2Abstract {
 		return 'http://api.kaixin001.com/oauth2/authorize';
 	}
 
-	public function getAuthorizeURL($url, $response_type = 'code', $scope = NULL, $state = NULL, $display = NULL, $oauth_client = NULL, $forcelogin = NULL) {
-		$params = array();
+	/**
+	 * authorize url
+	 * 
+	 * @param array $params
 		$params['client_id'] = $this->client_id;
 		$params['redirect_uri'] = $url;
 		$params['response_type'] = $response_type;
@@ -29,8 +31,15 @@ class KaixinOAuth2 extends OAuth2Abstract {
 		$params['display'] = $display;
 		$params['oauth_client'] = $oauth_client;
 		$params['forcelogin'] = $forcelogin;
-		
-		return $this->authorizeURL() . "?" . http_build_query($params);
+	 * @return string
+	 */
+	public function getAuthorizeURL(array $params) {
+		$defaults = array(
+				'client_id'	=> $this->client_id,
+				'response_type'=> 'code',
+		);
+	
+		return $this->authorizeURL() . "?" . http_build_query($params + $defaults);
 	}
 
 	protected function _tokenFilter($response){

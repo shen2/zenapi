@@ -23,20 +23,20 @@ class GithubOAuth2 extends OAuth2Abstract {
 	 *
 	 * @link https://developer.github.com/v3/oauth/#web-application-flow
 	 *
-	 * @param string $url 授权后的回调地址,站外应用需与回调地址一致,站内应用需要填写canvas page的地址
-	 * @param string $response_type 支持的值包括 code 和token 默认值为code
-	 * @param string $state 用于保持请求和回调的状态。在回调时,会在Query Parameter中回传该参数
-	 * @param string $scope
-	 * @return array
+	 * @param array $params
+	 * $url 授权后的回调地址,站外应用需与回调地址一致,站内应用需要填写canvas page的地址
+	 * $response_type 支持的值包括 code 和token 默认值为code
+	 * $state 用于保持请求和回调的状态。在回调时,会在Query Parameter中回传该参数
+	 * $scope
+	 * @return string
 	 */
-	public function getAuthorizeURL( $url, $response_type = 'code', $state = NULL, $scope = NULL) {
-		$params = array();
-		$params['client_id'] = $this->client_id;
-		$params['redirect_uri'] = $url;
-		$params['state'] = $state;
-		$params['scope'] = $scope;
-		
-		return $this->authorizeURL() . "?" . http_build_query($params);
+	public function getAuthorizeURL(array $params) {
+		$defaults = array(
+				'client_id'	=> $this->client_id,
+				'response_type'=> 'code',
+		);
+	
+		return $this->authorizeURL() . "?" . http_build_query($params + $defaults);
 	}
 
 	protected function _tokenFilter($response){
