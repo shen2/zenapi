@@ -21,7 +21,11 @@ class WeiboClient extends Client{
 		if ($this->access_token)
 			$headers[] = "Authorization: OAuth2 ".$this->access_token;
 		
-		$headers[] = "API-RemoteIP: " . ($this->remote_ip ?: $_SERVER['REMOTE_ADDR']);
+		if (isset($this->remote_ip))
+			$headers[] = "API-RemoteIP: " . $this->remote_ip;
+		elseif(isset($_SERVER['REMOTE_ADDR']))
+			$headers[] = "API-RemoteIP: " . $_SERVER['REMOTE_ADDR'];
+		
 		return $headers;
 	}
 	

@@ -85,8 +85,10 @@ class WeiboOAuth2 extends OAuth2Abstract {
 	protected function _additionalHeaders(){
 		$headers = array();
 		
-		if (isset($this->remote_ip) || isset($_SERVER['REMOTE_ADDR']))
-			$headers[] = "API-RemoteIP: " . ($this->remote_ip ?: $_SERVER['REMOTE_ADDR']);
+		if (isset($this->remote_ip))
+			$headers[] = "API-RemoteIP: " . $this->remote_ip;
+		elseif(isset($_SERVER['REMOTE_ADDR']))
+			$headers[] = "API-RemoteIP: " . $_SERVER['REMOTE_ADDR'];
 		
 		return $headers;
 	}
