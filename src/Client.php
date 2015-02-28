@@ -3,11 +3,11 @@ namespace ZenAPI;
 
 class Client {
 	/**
-	 * Contains the last API call.
-	 *
-	 * @ignore
+	 * 
+	 * @var curl Handle
 	 */
-	public $url;
+	protected $_curlHandle;
+	
 	/**
 	 * Set up the API root URL.
 	 *
@@ -15,6 +15,10 @@ class Client {
 	 */
 	public $host;
 	
+	/**
+	 * 
+	 * @var array
+	 */
 	protected $_curlOptions = array(
 		CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
 		CURLOPT_USERAGENT		=> 'ZenAPI v0.3',
@@ -24,29 +28,11 @@ class Client {
 	);
 	
 	/**
-	 * Respons format.
-	 *
-	 * @ignore
-	 */
-	public $format = 'json';
-	/**
-	 * Decode returned json data.
-	 *
-	 * @ignore
-	 */
-	public $decode_json = TRUE;
-	/**
 	 * Contains the last HTTP headers returned.
 	 *
 	 * @ignore
 	 */
-	public $http_header;
-	/**
-	 * Contains the last HTTP info returned.
-	 *
-	 * @ignore
-	 */
-	public $http_info;
+	public $http_header = array();
 	
 	/**
 	 * print the debug info
@@ -56,11 +42,13 @@ class Client {
 	public $debug = FALSE;
 
 	/**
-	 * boundary of multipart
-	 * @ignore
+	 * 
+	 * @param string $host
 	 */
-	public static $boundary = '';
-
+	public function __construct($host = '') {
+		$this->host = $host;
+	}
+	
 	public function setCurlOptions(array $options){
 		$this->_curlOptions = array_merge($this->_curlOptions, $options);
 	}
@@ -68,13 +56,18 @@ class Client {
 	protected function _paramsFilter(&$params){
 	}
 
+	/**
+	 * 
+	 * @param string $response
+	 * @throws Exception
+	 * @return array
+	 */
 	public function parseResponse($response){
-		if ($this->format === 'json' && $this->decode_json) {
-			$json = json_decode($response, true);		//	modified by shen2
-			if ($json !== null)
-				return $json;
-		}
-		return $response;
+		$json = json_decode($response, true);
+		if ($json === null)
+			throw new \Exception($response);
+		
+		return $json;
 	}
 	
 	/**
@@ -85,7 +78,7 @@ class Client {
 	public function get($url, $parameters = array()) {
 		$this->_paramsFilter($parameters);
 		
-		$response = $this->http($this->realUrl($url) . '?' . http_build_query($parameters), 'GET');
+		$response = $this->http($this->realUrl($url) . (empty($parameters) ? '' : '?' . http_build_query($parameters)), 'GET', null, $this->_additionalHeaders());
 		
 		return $this->parseResponse($response);
 	}
@@ -99,7 +92,7 @@ class Client {
 		$this->_paramsFilter($parameters);
 		
 		$body = http_build_query($parameters);
-		$response = $this->http($this->realUrl($url), 'POST', $body);
+		$response = $this->http($this->realUrl($url), 'POST', $body, $this->_additionalHeaders());
 		
 		return $this->parseResponse($response);
 	}
@@ -107,10 +100,11 @@ class Client {
 	public function postMulti($url, $parameters = array()) {
 		$this->_paramsFilter($parameters);
 
-		$body = self::build_http_query_multi($parameters);
-		$headers = array("Content-Type: multipart/form-data; boundary=" . self::$boundary);
+		$boundary = uniqid('------------------');
+		$body = self::build_http_query_multi($parameters, $boundary);
+		$headers = array("Content-Type: multipart/form-data; boundary=" . $boundary);
 
-		$response = $this->http($this->realUrl($url), 'POST', $body, $headers);
+		$response = $this->http($this->realUrl($url), 'POST', $body, array_merge($headers, $this->_additionalHeaders()));
 
 		return $this->parseResponse($response);
 	}
@@ -132,7 +126,7 @@ class Client {
 		$this->_paramsFilter($parameters);
 
 		$body = http_build_query($parameters);
-		$response = $this->http($this->realUrl($url), 'PUT', $body);
+		$response = $this->http($this->realUrl($url), 'PUT', $body, $this->_additionalHeaders());
 
 		return $this->parseResponse($response);
 	}
@@ -140,10 +134,11 @@ class Client {
 	public function putMulti($url, $parameters = array()) {
 		$this->_paramsFilter($parameters);
 
-		$body = self::build_http_query_multi($parameters);
-		$headers = array("Content-Type: multipart/form-data; boundary=" . self::$boundary);
+		$boundary = uniqid('------------------');
+		$body = self::build_http_query_multi($parameters, $boundary);
+		$headers = array("Content-Type: multipart/form-data; boundary=" . $boundary);
 
-		$response = $this->http($this->realUrl($url), 'PUT', $body, $headers);
+		$response = $this->http($this->realUrl($url), 'PUT', $body, array_merge($headers, $this->_additionalHeaders()));
 
 		return $this->parseResponse($response);
 	}
@@ -152,7 +147,7 @@ class Client {
 		$this->_paramsFilter($parameters);
 
 		$body = http_build_query($parameters);
-		$response = $this->http($this->realUrl($url), 'PATCH', $body);
+		$response = $this->http($this->realUrl($url), 'PATCH', $body, $this->_additionalHeaders());
 
 		return $this->parseResponse($response);
 	}
@@ -160,10 +155,11 @@ class Client {
 	public function patchMulti($url, $parameters = array()) {
 		$this->_paramsFilter($parameters);
 
-		$body = self::build_http_query_multi($parameters);
-		$headers = array("Content-Type: multipart/form-data; boundary=" . self::$boundary);
+		$boundary = uniqid('------------------');
+		$body = self::build_http_query_multi($parameters, $boundary);
+		$headers = array("Content-Type: multipart/form-data; boundary=" . $boundary);
 
-		$response = $this->http($this->realUrl($url), 'PATCH', $body, $headers);
+		$response = $this->http($this->realUrl($url), 'PATCH', $body, array_merge($headers, $this->_additionalHeaders()));
 
 		return $this->parseResponse($response);
 	}
@@ -177,11 +173,7 @@ class Client {
 	}
 	
 	public function realUrl($url){
-		if (strrpos($url, 'https://') !== 0 && strrpos($url, 'https://') !== 0) {
-			$url = $this->host . $url;
-		}
-	
-		return $url;
+		return $this->host . $url;
 	}
 	
 	/**
@@ -195,15 +187,23 @@ class Client {
 	 * @return string API results
 	 */
 	public function http($url, $method, $postfields = NULL, $headers = array()) {
-		$this->http_info = array();
-		$ci = curl_init();
+		if ($this->_curlHandle !== null){
+			curl_close($this->_curlHandle);
+			$this->http_header = array();
+		}
+		
+		$this->_curlHandle = $ci = curl_init();
+		
 		/* Curl settings */
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
-		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
+		curl_setopt($ci, CURLOPT_HEADERFUNCTION, function($ch, $header){
+			$this->http_header[] = $header;
+			return strlen($header);
+		});
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 		curl_setopt($ci, CURLOPT_URL, $url);
-		curl_setopt($ci, CURLOPT_HTTPHEADER, array_merge($headers, $this->_additionalHeaders()));
+		curl_setopt($ci, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE);
 		
 		curl_setopt_array($ci, $this->_curlOptions);
@@ -224,84 +224,89 @@ class Client {
 
 		$response = curl_exec($ci);
 		
-		if ($response === false){	//	modified by shen2
-			$exception = new CurlException(curl_error($ci), curl_errno($ci));
-	    	curl_close($ci);
-	    	throw $exception;
+		if ($response === false){
+	    	throw new CurlException(curl_error($ci), curl_errno($ci));
 		}
 		
-		$this->http_info = array_merge($this->http_info, curl_getinfo($ci));
-		$this->url = $url;
-
 		if ($this->debug) {
 			echo "=====post data======\r\n";
 			var_dump($postfields);
 
 			echo '=====info====='."\r\n";
-			print_r( curl_getinfo($ci) );
+			print_r( curl_getinfo($this->_curlHandle) );
 
 			echo '=====$response====='."\r\n";
 			print_r( $response );
 		}
-		curl_close ($ci);
 		return $response;
 	}
-
+	
+	public function __destruct(){
+		curl_close($this->_curlHandle);
+	}
+	
 	/**
-	 * Get the header info to store.
-	 *
-	 * @return int
-	 * @ignore
+	 * 
+	 * @return array
 	 */
-	public function getHeader($ch, $header) {
-		$i = strpos($header, ':');
-		if (!empty($i)) {
-			$key = str_replace('-', '_', strtolower(substr($header, 0, $i)));
-			$value = trim(substr($header, $i + 2));
-			$this->http_header[$key] = $value;
-		}
-		return strlen($header);
+	public function getInfo(){
+		return curl_getinfo($this->_curlHandle);
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	public function getUrl(){
+		return curl_getinfo($this->_curlHandle, CURLINFO_EFFECTIVE_URL);
 	}
 
 	/**
-	 * @ignore
+	 * Get the header info
+	 *
+	 * @return array
 	 */
-	public static function build_http_query_multi($params) {
+	public function getHeader() {
+		$header = array();
+		foreach($this->http_header as $line){
+			$i = strpos($line, ':');
+			if (!empty($i)) {
+				$key = str_replace('-', '_', strtolower(substr($line, 0, $i)));
+				$value = trim(substr($line, $i + 2));
+				$header[$key] = $value;
+			}
+		}
+		return $header;
+	}
+
+	/**
+	 * 
+	 * @param array $params
+	 * @param string $boundary
+	 * @return string
+	 */
+	public static function build_http_query_multi($params, $boundary) {
 		if (!$params) return '';
 
 		uksort($params, 'strcmp');
 
-		self::$boundary = $boundary = uniqid('------------------');
-		$MPboundary = '--'.$boundary;
-		$endMPboundary = $MPboundary. '--';
 		$multipartbody = '';
 
 		foreach ($params as $parameter => $value) {
 			if(	$value instanceof ImageFile ) {
-				$multipartbody .= $MPboundary . "\r\n";
+				$multipartbody .= '--' . $boundary . "\r\n";
 				$multipartbody .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $value->filename . '"'. "\r\n";
 				$multipartbody .= "Content-Type: image/unknown\r\n\r\n";
 				$multipartbody .= $value->content. "\r\n";
 			}
-			else if( in_array($parameter, array('pic', 'image')) && $value{0} == '@' ) {
-				$url = ltrim( $value, '@' );
-				$content = file_get_contents( $url );
-				$array = explode( '?', basename( $url ) );
-				$filename = $array[0];
-
-				$multipartbody .= $MPboundary . "\r\n";
-				$multipartbody .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $filename . '"'. "\r\n";
-				$multipartbody .= "Content-Type: image/unknown\r\n\r\n";
-				$multipartbody .= $content. "\r\n";
-			} else {
-				$multipartbody .= $MPboundary . "\r\n";
+			else {
+				$multipartbody .= '--' . $boundary . "\r\n";
 				$multipartbody .= 'content-disposition: form-data; name="' . $parameter . "\"\r\n\r\n";
 				$multipartbody .= $value."\r\n";
 			}
-
 		}
 
-		$multipartbody .= $endMPboundary;
+		$multipartbody .= '--' . $boundary. '--';
 		return $multipartbody;
 	}
 }
