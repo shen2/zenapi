@@ -1,5 +1,5 @@
 <?php
-namespace ZenOAuth2;
+namespace ZenAPI;
 
 class Exception extends \Exception {
 	// pass

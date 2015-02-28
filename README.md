@@ -1,17 +1,17 @@
-ZenOAuth2
+ZenAPI
 =========
 
 通过一个统一风格的OAuth2访问库，统一各大社交网站接口。
 
 ## 安装方法
-ZenOAuth2需要php5.3+，唯一的依赖是curl extension。
+ZenAPI需要php5.3+，唯一的依赖是curl extension。
 
-ZenOAuth2遵循PSR-4规范。只需在composer.json中添加依赖：
+ZenAPI遵循PSR-4规范。只需在composer.json中添加依赖：
 ```
     ...
     "require": {
         ...
-        "duoshuo/php-cassandra": "dev-master"
+        "shen2/zenapi": "dev-master"
     }
     ...
 ```
@@ -31,7 +31,7 @@ $config = array(
 	'skey' => 'secret key', 
 	'scope' => 'email,friendships_groups_read',
 );
-$oauth = new ZenOAuth2\WeiboOAuth2($config['akey'], $config['skey']);  //初始化oauth
+$oauth = new ZenAPI\WeiboOAuth2($config['akey'], $config['skey']);  //初始化oauth
 $params = array(
 	'client_id'	=> $config['akey'],
 	'redirect_uri'	=> 'callback',//设置回调
@@ -64,7 +64,7 @@ $token = $oauth->getAccessToken('code', $keys);
 
 ```php
 //根据上一步的acces_token实例化Client对象
-$client = new ZenOAuth2\WeiboClient($token['access_token']);
+$client = new ZenAPI\WeiboClient($token['access_token']);
 
 //根据uid获取用户信息
 $info = $client->get('users/show', array('uid'=>1739476392)); 
@@ -85,3 +85,6 @@ $data = $client->post('comments/destory', array('uid'=>1739476392, 'cid' => 'wei
 * Google
 * Instagram
 * Github
+* 优酷
+* 土豆
+* 爱奇艺

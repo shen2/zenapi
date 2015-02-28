@@ -1,7 +1,8 @@
 <?php
-namespace ZenOAuth2;
+namespace ZenAPI;
 
-class TudouOAuth2 extends OAuth2Abstract {
+class TudouOAuth2 extends Client{
+	use OAuth2Trait;
 
 	/**
 	 * Set API URLS

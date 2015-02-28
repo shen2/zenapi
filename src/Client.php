@@ -1,11 +1,7 @@
 <?php
-namespace ZenOAuth2;
+namespace ZenAPI;
 
 class Client {
-	/**
-	 * @ignore
-	 */
-	public $access_token;
 	/**
 	 * Contains the last API call.
 	 *
@@ -21,7 +17,7 @@ class Client {
 	
 	protected $_curlOptions = array(
 		CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
-		CURLOPT_USERAGENT		=> 'ZenOAuth2 v0.3',
+		CURLOPT_USERAGENT		=> 'ZenAPI v0.3',
 		CURLOPT_CONNECTTIMEOUT	=> 30,
 		CURLOPT_TIMEOUT			=> 30,
 		CURLOPT_SSL_VERIFYPEER	=> FALSE,
@@ -65,13 +61,6 @@ class Client {
 	 */
 	public static $boundary = '';
 
-	/**
-	 * construct self object
-	 */
-	public function __construct($access_token = NULL) {
-		$this->access_token = $access_token;
-	}
-	
 	public function setCurlOptions(array $options){
 		$this->_curlOptions = array_merge($this->_curlOptions, $options);
 	}

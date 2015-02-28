@@ -1,7 +1,8 @@
 <?php
-namespace ZenOAuth2;
+namespace ZenAPI;
 
-class GoogleOAuth2 extends OAuth2Abstract {
+class GoogleOAuth2 extends Client{
+	use OAuth2Trait;
 	/**
 	 * Set up the API root URL.
 	 *

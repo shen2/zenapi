@@ -1,6 +1,6 @@
 {
-	"name": "shen2/zen-oauth2",
-	"description": "一个更好的OAuth2访问类，同时支持微博、豆瓣、Google等社交网站",
+	"name": "shen2/zenapi",
+	"description": "一个更好的OAuth2访问类，同时支持微博、QQ空间、腾讯微博、人人、百度、搜狐、开心、豆瓣、Google、Instagram、土豆、优酷、奇艺等社交网站",
 	"minimum-stability": "stable",
 	"license": "MIT",
 	"authors": [
@@ -13,6 +13,6 @@
 		"php": ">=5.4.0"
 	},
 	"autoload": {
-		"psr-4": { "ZenOAuth2\\": "src/" }
+		"psr-4": { "ZenAPI\\": "src/" }
 	}
 }

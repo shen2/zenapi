@@ -1,7 +1,13 @@
 <?php
-namespace ZenOAuth2;
+namespace ZenAPI;
 
 class YoukuClient extends Client{
+	/**
+	 * 
+	 * @var string
+	 */
+	public $access_token;
+	
 	/**
 	 * Set up the API root URL.
 	 *

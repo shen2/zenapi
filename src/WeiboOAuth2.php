@@ -1,7 +1,8 @@
 <?php
-namespace ZenOAuth2;
+namespace ZenAPI;
 
-class WeiboOAuth2 extends OAuth2Abstract {
+class WeiboOAuth2 extends Client{
+	use OAuth2Trait;
 	/**
 	 * 
 	 * @var string
