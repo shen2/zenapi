@@ -242,7 +242,9 @@ class BaseClient {
 	}
 	
 	public function __destruct(){
-		curl_close($this->_curlHandle);
+		if ($this->_curlHandle !== null){
+			curl_close($this->_curlHandle);
+		}
 	}
 	
 	/**
