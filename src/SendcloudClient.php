@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class SendcloudClient extends Client{
+class SendcloudClient extends BaseClient{
 	/**
 	 * Set up the API root URL.
 	 *

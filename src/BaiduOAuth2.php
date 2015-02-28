@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class BaiduOAuth2 extends Client{
+class BaiduOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

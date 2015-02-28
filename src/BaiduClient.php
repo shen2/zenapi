@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class BaiduClient extends Client{
+class BaiduClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

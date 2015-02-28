@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class YoukuOAuth2 extends Client{
+class YoukuOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

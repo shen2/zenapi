@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class RenrenClient extends Client{
+class RenrenClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

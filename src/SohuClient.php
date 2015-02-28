@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class SohuClient extends Client{
+class SohuClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

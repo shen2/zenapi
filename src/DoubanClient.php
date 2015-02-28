@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class DoubanClient extends Client{
+class DoubanClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

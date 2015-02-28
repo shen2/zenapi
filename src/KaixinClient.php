@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class KaixinClient extends Client{
+class KaixinClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class GithubOAuth2 extends Client{
+class GithubOAuth2 extends BaseClient{
 	use OAuth2Trait;
 	/**
 	 * Set API URLS

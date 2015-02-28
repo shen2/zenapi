@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class KaixinOAuth2 extends Client{
+class KaixinOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class QqtOAuth2 extends Client{
+class QqtOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

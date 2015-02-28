@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class GoogleClient extends Client{
+class GoogleClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

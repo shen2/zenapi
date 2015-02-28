@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class QqClient extends Client{
+class QqClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class TudouClient extends Client{
+class TudouClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class GithubClient extends Client{
+class GithubClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

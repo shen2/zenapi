@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class SohuOAuth2 extends Client{
+class SohuOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

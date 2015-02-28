@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class DoubanOAuth2 extends Client{
+class DoubanOAuth2 extends BaseClient{
 	use OAuth2Trait;
 	/**
 	 * Set API URLS

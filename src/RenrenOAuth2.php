@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class RenrenOAuth2 extends Client{
+class RenrenOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

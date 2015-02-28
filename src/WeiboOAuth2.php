@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class WeiboOAuth2 extends Client{
+class WeiboOAuth2 extends BaseClient{
 	use OAuth2Trait;
 	/**
 	 * 

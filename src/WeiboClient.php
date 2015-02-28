@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class WeiboClient extends Client{
+class WeiboClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

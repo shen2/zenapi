@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class InstagramOAuth2 extends Client{
+class InstagramOAuth2 extends BaseClient{
 	use OAuth2Trait;
 	/**
 	 * Set API URLS

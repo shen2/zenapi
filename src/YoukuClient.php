@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class YoukuClient extends Client{
+class YoukuClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

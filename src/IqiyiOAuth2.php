@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class IqiyiOAuth2 extends Client{
+class IqiyiOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

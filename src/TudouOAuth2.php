@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class TudouOAuth2 extends Client{
+class TudouOAuth2 extends BaseClient{
 	use OAuth2Trait;
 
 	/**

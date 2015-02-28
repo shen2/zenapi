@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class IqiyiClient extends Client{
+class IqiyiClient extends BaseClient{
 	/**
 	 * 
 	 * @var string

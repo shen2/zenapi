@@ -1,7 +1,7 @@
 <?php
 namespace ZenAPI;
 
-class InstagramClient extends Client{
+class InstagramClient extends BaseClient{
 	/**
 	 * 
 	 * @var string
