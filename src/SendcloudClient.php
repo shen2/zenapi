@@ -10,6 +10,12 @@ class SendcloudClient extends BaseClient{
 	public $host = "https://sendcloud.sohu.com/webapi/";
 	
 	/**
+	 *
+	 * @var string
+	 */
+	public $format = 'json';
+	
+	/**
 	 * 
 	 * @param string $api_user
 	 * @param string $api_key

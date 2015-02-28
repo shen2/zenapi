@@ -16,6 +16,12 @@ class TudouClient extends BaseClient{
 	public $host = 'https://api.tudou.com/v6/';
 	
 	/**
+	 *
+	 * @var string
+	 */
+	public $format = 'json';
+	
+	/**
 	 * 
 	 * @param string $access_token
 	 * @param string $client_id

@@ -22,6 +22,12 @@ class WeiboClient extends BaseClient{
 	public $remote_ip = null;
 	
 	/**
+	 * 
+	 * @var string
+	 */
+	public $format = 'json';
+	
+	/**
 	 *
 	 * @param string $access_token
 	 */
@@ -55,10 +61,6 @@ class WeiboClient extends BaseClient{
 	}
 	
 	public function realUrl($url){
-		if (strrpos($url, 'https://') !== 0 && strrpos($url, 'https://') !== 0) {
-			$url = $this->host . $url . '.' . $this->format;
-		}
-		
-		return $url;
+		return $this->host . $url . '.' . $this->format;
 	}
 }
