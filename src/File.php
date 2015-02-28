@@ -1,22 +1,25 @@
 <?php 
 namespace ZenAPI;
 
-class ImageFile{
+class File{
 	
 	public $content;
 	
 	public $filename;
 	
-	public function __construct($content, $filename){
+	public $mime;
+	
+	public function __construct($content, $filename, $mime = 'image/unknown'){
 		$this->content = $content;
 		$this->filename = $filename;
+		$this->mime = $mime;
 	}
 	
 	public static function createByUrl($url){
 		$content = file_get_contents($url);
 		
-		if (empty($content))
-			throw new Exception('Image is Empty');
+		if ($content === false)
+			throw new Exception('Failed to get file ' . $url);
 		
 		$array = explode( '?', basename( $url ) );
 		$filename = $array[0];

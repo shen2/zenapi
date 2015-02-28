@@ -65,7 +65,7 @@ class Client {
 	public function parseResponse($response){
 		$json = json_decode($response, true);
 		if ($json === null)
-			throw new \Exception($response);
+			throw new Exception($response);
 		
 		return $json;
 	}
@@ -288,15 +288,15 @@ class Client {
 	public static function build_http_query_multi($params, $boundary) {
 		if (!$params) return '';
 
-		uksort($params, 'strcmp');
+		//uksort($params, 'strcmp');
 
 		$multipartbody = '';
 
 		foreach ($params as $parameter => $value) {
-			if(	$value instanceof ImageFile ) {
+			if(	$value instanceof File) {
 				$multipartbody .= '--' . $boundary . "\r\n";
 				$multipartbody .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $value->filename . '"'. "\r\n";
-				$multipartbody .= "Content-Type: image/unknown\r\n\r\n";
+				$multipartbody .= "Content-Type: ' . $value->mime . '\r\n\r\n";
 				$multipartbody .= $value->content. "\r\n";
 			}
 			else {
