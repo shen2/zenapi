@@ -82,6 +82,7 @@ $data = $client->post('comments/destory', array('uid'=>1739476392, 'cid' => 'wei
 * 搜狐
 * 豆瓣
 * 开心
+* 多说
 * Google
 * Instagram
 * Github
