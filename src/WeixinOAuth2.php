@@ -55,7 +55,6 @@ class WeixinOAuth2 extends BaseClient{
         if ( $type === 'code' ) {
             $params['grant_type'] = 'authorization_code';
             $params['code'] = $keys['code'];
-            $params['redirect_uri'] = $keys['redirect_uri'];
         } else {
             throw new Exception("wrong auth type");
         }
